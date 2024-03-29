@@ -4,6 +4,7 @@
 
 // TODO : Store key,value in std::pair as STL uses them
 // TODO : implement templates, so hashmap can take any type of parameters
+// TODO : copy constructor,move constructor, copy assignment operator, move assignment operator overload
 
 class hashmap
 {
@@ -20,9 +21,17 @@ private:
         Node(std::string k, std::string v) : key(k), value(v), next(nullptr){}; // key value
     };
     Node *HashTable[tablesize];
-public:
 
-    hashmap();
+public:
+    hashmap(); // Normal constructor
+    
+    // hashmap(const hashmap& other);          // copy constructor
+
+    // hashmap(hashmap&& other);               // Move constructor
+
+    // hashmap& operator=(const hashmap& rhs); // copy assignment operator overload
+
+    // hashmap& operator=(hashmap&& rhs);      // r-value move assignment overload
 
     ~hashmap();
 

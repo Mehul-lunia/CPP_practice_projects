@@ -1,6 +1,14 @@
 #include <iostream>
+#include <vector>
 #include <string.h>
 #include "./Header_files/hash.hpp"
+
+
+// TODO : copy constructor not working properly
+// TODO : Makefile not executing commands properly
+
+
+
 
 // Utility Functions
 int String_hasher(std::string key, int capacity)
@@ -16,8 +24,40 @@ int String_hasher(std::string key, int capacity)
 //  Public function Implementation
 hashmap::hashmap()
 {
-    memset(HashTable,0,sizeof(Node*)*tablesize);
+    memset(HashTable, 0, sizeof(Node *) * tablesize);
 }
+
+// hashmap::hashmap(const hashmap& other)
+// {
+//     memset(HashTable,0,sizeof(Node*)*tablesize);
+//     for(int i=0;i<tablesize;i++)
+//     {
+//         Node* curr = other.HashTable[i];
+//         std::vector<Node*> vect;
+//         while(curr != nullptr)
+//         {
+//            Node* new_node = new Node(curr->key,curr->value);
+//            vect.push_back(new_node);
+//            curr = curr->next;
+//         }
+//         for(int i=0;i<(vect.size()-1);i++)
+//         {
+//             vect[i]->next = vect[i+1];
+//         }
+//         if(!vect.empty())HashTable[i] = vect[0];
+//         m_size += vect.size();
+
+//     }
+// }
+
+// hashmap::hashmap(hashmap&& other)
+// {}
+
+// hashmap& hashmap::operator=(const hashmap& rhs)
+// {}
+
+// hashmap& hashmap::operator=(hashmap&& rhs)
+// {}
 
 int hashmap::hash(std::string key)
 {
@@ -91,7 +131,7 @@ std::string hashmap::get(std::string key)
 
 int hashmap::size() { return m_size; }
 
-hashmap::~hashmap() 
+hashmap::~hashmap()
 {
     for (int i = 0; i < tablesize; i++)
     {
@@ -170,10 +210,15 @@ int hashmap::get_bucketsize(int bucket_idx)
         return 0;
     Node *curr = HashTable[bucket_idx];
     int bucket_size = 0;
-    while (curr)
+    while (curr != nullptr)
     {
         bucket_size++;
         curr = curr->next;
     }
     return bucket_size;
+}
+
+bool hashmap::isEmpty()
+{
+    return m_size == 0 ? 1 : 0;
 }

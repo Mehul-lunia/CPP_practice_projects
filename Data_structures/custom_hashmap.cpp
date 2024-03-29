@@ -1,7 +1,6 @@
-#include <cstdlib>
 #include <iostream>
 #include <string.h>
-#include "./Header_files/hash.h"
+#include "./Header_files/hash.hpp"
 
 // Utility Functions
 int String_hasher(std::string key, int capacity)
@@ -14,22 +13,16 @@ int String_hasher(std::string key, int capacity)
     return str_total % capacity;
 }
 
-
-
-
 //  Public function Implementation
 hashmap::hashmap()
 {
-    for (int i = 0; i < tablesize; i++)
-        HashTable[i] = nullptr;
+    memset(HashTable,0,sizeof(Node*)*tablesize);
 }
-
 
 int hashmap::hash(std::string key)
 {
-    return String_hasher(key,tablesize);
+    return String_hasher(key, tablesize);
 }
-
 
 std::string &hashmap::operator[](const std::string &key)
 {
@@ -55,7 +48,6 @@ std::string &hashmap::operator[](const std::string &key)
     return new_node->value;
 }
 
-
 void hashmap::Add(std::string key, std::string value)
 {
     int idx = hash(key);
@@ -64,21 +56,25 @@ void hashmap::Add(std::string key, std::string value)
     {
         HashTable[idx] = new_node;
         m_size++;
+        std::cout << "[INFO] successfully added new Element!" << std::endl;
+        return;
     }
-    else
+    Node *curr = HashTable[idx];
+    Node *prev = nullptr;
+    while (curr != nullptr)
     {
-        Node *curr = HashTable[idx];
-        while (curr->next != nullptr)
+        if (curr->key == key)
         {
-            if (curr->key == key)
-                return; // duplicate
-            curr = curr->next;
+            std::cout << "[WARNING] Insertion of duplicate Element in HashTable.Rejected!" << std::endl;
+            return; // duplicate
         }
-        curr->next = new_node;
-        m_size++;
+        prev = curr;
+        curr = curr->next;
     }
+    prev->next = new_node;
+    m_size++;
+    std::cout << "[INFO] successfully added new Element!" << std::endl;
 }
-
 
 std::string hashmap::get(std::string key)
 {
@@ -93,11 +89,9 @@ std::string hashmap::get(std::string key)
     return "empty";
 }
 
-
 int hashmap::size() { return m_size; }
 
-
-hashmap::~hashmap() // TODO : check its accuracy!
+hashmap::~hashmap() 
 {
     for (int i = 0; i < tablesize; i++)
     {
@@ -113,7 +107,8 @@ void hashmap::Remove(std::string key)
     int idx = hash(key);
     // Linked List is empty
     if (HashTable[idx] == nullptr)
-        return;
+        std::cout << "[WARNING] No such Item exists!" << std::endl;
+    return;
     // removed Node is first Node
     if (HashTable[idx]->key == key)
     {
@@ -126,47 +121,56 @@ void hashmap::Remove(std::string key)
     // if the removed Node is not the first Node
     Node *curr = HashTable[idx];
     Node *prev = nullptr;
+    bool item_found_removed = false;
     while (curr != nullptr)
     {
         if (curr->key == key)
         {
             prev->next = curr->next;
-            return;
+            item_found_removed = true;
+            m_size--;
+            break;
         }
         prev = curr;
         curr = curr->next;
     }
-    m_size--;
+    if (!item_found_removed)
+    {
+        std::cout << "[Warning] no such item exists!" << std::endl;
+    }
+    else
+    {
+        std::cout << "[INFO] Removed Item successfully!" << std::endl;
+    }
 }
 
 void hashmap::printMap()
 {
-    for(int i=0;i<tablesize;i++)
+    for (int i = 0; i < tablesize; i++)
     {
-        if(HashTable[i] == nullptr)
+        if (HashTable[i] == nullptr)
         {
-            std::cout<<i+1<<std::endl;   // idx
+            std::cout << i + 1 << std::endl; // idx
             continue;
         }
-        std::cout<<i+1<<"    ";          // idx
-        Node* curr = HashTable[i];
-        while(curr != nullptr)
+        std::cout << i + 1 << "    "; // idx
+        Node *curr = HashTable[i];
+        while (curr != nullptr)
         {
-            std::cout<< "Key: "<< curr->key << " value: "<< curr->value<<"    ";
+            std::cout << "Key: " << curr->key << " value: " << curr->value << "    ";
             curr = curr->next;
         }
-        std::cout<<std::endl;
+        std::cout << std::endl;
     }
-
 }
-
 
 int hashmap::get_bucketsize(int bucket_idx)
 {
-    if(HashTable[bucket_idx] == nullptr) return 0;
-    Node* curr = HashTable[bucket_idx];
+    if (HashTable[bucket_idx] == nullptr)
+        return 0;
+    Node *curr = HashTable[bucket_idx];
     int bucket_size = 0;
-    while(curr)
+    while (curr)
     {
         bucket_size++;
         curr = curr->next;

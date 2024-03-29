@@ -28,6 +28,8 @@ public:
 
     int hash(std::string key);
 
+    bool isEmpty();
+
     std::string &operator[](const std::string &key);
 
     void Add(std::string key, std::string value);
